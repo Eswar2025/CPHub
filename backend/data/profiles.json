@@ -110,10 +110,10 @@
         "rank": "legendary grandmaster",
         "maxRank": "tourist",
         "contribution": 58,
-        "friendOfCount": 89408,
+        "friendOfCount": 89411,
         "solvedCount": 3015,
         "source": "real_api",
-        "lastUpdated": "2026-06-26T07:37:12.956Z"
+        "lastUpdated": "2026-06-26T15:36:24.403Z"
       },
       {
         "platform": "leetcode",
@@ -126,7 +126,7 @@
         "friendOfCount": 0,
         "solvedCount": 154,
         "source": "mock_data",
-        "lastUpdated": "2026-06-26T07:37:06.782Z"
+        "lastUpdated": "2026-06-26T15:36:19.917Z"
       },
       {
         "platform": "codechef",
@@ -139,7 +139,7 @@
         "friendOfCount": 0,
         "solvedCount": 111,
         "source": "mock_data",
-        "lastUpdated": "2026-06-26T07:37:06.782Z"
+        "lastUpdated": "2026-06-26T15:36:19.917Z"
       }
     ],
     "summary": {
@@ -147,7 +147,7 @@
       "totalSolved": 3280,
       "activePlatforms": 3
     },
-    "lastUpdated": "2026-06-26T07:37:12.957Z"
+    "lastUpdated": "2026-06-26T15:36:24.403Z"
   },
   "jiangly": {
     "handle": "jiangly",
@@ -198,5 +198,55 @@
       "activePlatforms": 3
     },
     "lastUpdated": "2026-06-26T06:35:03.573Z"
+  },
+  "eswar_777": {
+    "handle": "Eswar_777",
+    "platforms": [
+      {
+        "platform": "codeforces",
+        "handle": "Eswar_777",
+        "rating": 1040,
+        "maxRating": 1040,
+        "rank": "newbie",
+        "maxRank": "newbie",
+        "contribution": 0,
+        "friendOfCount": 1,
+        "solvedCount": 31,
+        "source": "real_api",
+        "lastUpdated": "2026-06-26T15:36:47.979Z"
+      },
+      {
+        "platform": "leetcode",
+        "handle": "eswar_777",
+        "rating": 1606,
+        "maxRating": 1606,
+        "rank": "mock_rank",
+        "maxRank": "mock_rank",
+        "contribution": 0,
+        "friendOfCount": 0,
+        "solvedCount": 166,
+        "source": "mock_data",
+        "lastUpdated": "2026-06-26T15:36:44.426Z"
+      },
+      {
+        "platform": "codechef",
+        "handle": "eswar_777",
+        "rating": 1573,
+        "maxRating": 1623,
+        "rank": "mock_rank",
+        "maxRank": "mock_rank",
+        "contribution": 0,
+        "friendOfCount": 0,
+        "solvedCount": 123,
+        "source": "mock_data",
+        "lastUpdated": "2026-06-26T15:36:44.426Z"
+      }
+    ],
+    "summary": {
+      "bestRating": 1606,
+      "totalSolved": 320,
+      "activePlatforms": 3
+    },
+    "lastUpdated": "2026-06-26T15:36:47.979Z"
   }
 }
