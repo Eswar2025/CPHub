@@ -1,10 +1,10 @@
 # Load Test Results
 
-Use this file to record real benchmark numbers after running the commands locally. Do not invent results.
+This file records real local benchmark results. Do not invent or edit benchmark numbers unless you run a new benchmark.
 
 ## Safety Note
 
-Do not repeatedly load test fresh Codeforces fetches. Fresh profile requests may call the external Codeforces API, and this project should not stress external services.
+Do not repeatedly load test fresh Codeforces fetches. Fresh profile requests may call the external Codeforces API, and this project should not stress external public services.
 
 For benchmarking, warm the cache first, then benchmark cached backend responses.
 
@@ -52,70 +52,40 @@ npx autocannon -c 20 -d 10 http://localhost:5003/api/profile/tourist
 npx autocannon -c 20 -d 10 http://localhost:5003/api/metrics
 ```
 
-## Result Table
+## Recorded Benchmark Context
 
-Fill this table only with measured numbers from your local run.
+| Field | Value |
+| --- | --- |
+| Date | 2026-06-26 |
+| Machine | Local Windows development machine |
+| Backend Port | 5003 |
+| Tool | autocannon |
+| Duration | 10 seconds |
+| Connections | 20 |
+| Cache State | Warmed cache before profile benchmark |
 
-| Date | Environment | Endpoint | Cache Provider | Connections | Duration | Avg Latency | P95 Latency | Requests/sec | Errors | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| TODO | Local | `/api/profile/tourist` | TODO: memory/redis | 20 | 10s | TODO | TODO | TODO | TODO | cache warmed first |
-| TODO | Local | `/api/metrics` | N/A | 20 | 10s | TODO | TODO | TODO | TODO | backend-only endpoint |
+The profile endpoint was warmed before benchmarking. This benchmark mainly measures cached backend responses and does not repeatedly stress the external Codeforces API.
 
-## What To Record
+These results are local development benchmarks, not production deployment numbers.
 
-- Average latency
-- p95 latency
-- Requests per second
-- Error count
-- Cache provider shown by the warmed profile response
-- Whether Redis was running or memory fallback was used
-
-## Actual Benchmark Results
-
-Date: 2026-06-26  
-Machine: Local Windows development machine  
-Backend Port: 5003  
-Tool: autocannon  
-Duration: 10 seconds  
-Connections: 20  
-Cache State: warmed cache before benchmark  
-Cache Provider: Redis or memory fallback, depending on local setup
-
-> Note: The profile endpoint was warmed before benchmarking. This benchmark mainly measures cached backend responses and does not repeatedly stress the external Codeforces API.
-
-### Benchmark 1: Cached Profile Endpoint
-
-Command:
-
-```powershell
-npm run bench:profile
-
-## Actual Benchmark Results
-
-Date: 2026-06-26  
-Machine: Local Windows development machine  
-Backend Port: 5003  
-Tool: autocannon  
-Duration: 10 seconds  
-Connections: 20  
-Cache State: Warmed cache before benchmark  
-
-Note: These results are local development benchmarks, not production deployment numbers. The profile endpoint was warmed before benchmarking, so this test mainly measures cached backend responses and does not repeatedly stress the external Codeforces API.
-
-### Benchmark 1: Cached Profile Endpoint
+## Benchmark 1: Cached Profile Endpoint
 
 Command used:
 
+```powershell
 npm run bench:profile
+```
 
 Endpoint:
 
+```txt
 GET http://localhost:5003/api/profile/tourist
+```
 
 Results:
 
 | Metric | Value |
-|---|---:|
+| --- | ---: |
 | Duration | 10.06s |
 | Connections | 20 |
 | Total Requests | ~6,000 |
@@ -129,20 +99,24 @@ Results:
 | Errors | 0 observed |
 | Timeouts | 0 observed |
 
-### Benchmark 2: Metrics Endpoint
+## Benchmark 2: Metrics Endpoint
 
 Command used:
 
+```powershell
 npm run bench:metrics
+```
 
 Endpoint:
 
+```txt
 GET http://localhost:5003/api/metrics
+```
 
 Results:
 
 | Metric | Value |
-|---|---:|
+| --- | ---: |
 | Duration | 10.03s |
 | Connections | 20 |
 | Total Requests | ~5,000 |
@@ -160,4 +134,13 @@ Results:
 
 The cached profile endpoint handled around 639 requests/sec locally with an average latency of around 30.85 ms. This shows that once profile data is cached, repeated requests can be served quickly without repeatedly calling the external Codeforces API.
 
-The metrics endpoint handled around 546 requests/sec locally with an average latency of around 36.05 ms. This confirms that the backend can also serve internal monitoring data efficiently.
+The metrics endpoint handled around 546 requests/sec locally with an average latency of around 36.05 ms. This confirms that the backend can serve internal monitoring data efficiently in the local benchmark setup.
+
+## Template For Future Runs
+
+Fill this table only with measured numbers from a real local run.
+
+| Date | Environment | Endpoint | Cache Provider | Connections | Duration | Avg Latency | P95/P97.5 Latency | Requests/sec | Errors | Notes |
+| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| TODO | Local | `/api/profile/tourist` | TODO: memory/redis | 20 | 10s | TODO | TODO | TODO | TODO | cache warmed first |
+| TODO | Local | `/api/metrics` | N/A | 20 | 10s | TODO | TODO | TODO | TODO | backend-only endpoint |
