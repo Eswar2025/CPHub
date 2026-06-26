@@ -3,6 +3,7 @@ const profileRoutes = require("./routes/profile.routes");
 const leaderboardRoutes = require("./routes/leaderboard.routes");
 const metricsRoutes = require("./routes/metrics.routes");
 const rateLimiter = require("./middleware/rateLimiter");
+const cacheService = require("./services/cache.service");
 const metricsService = require("./services/metrics.service");
 const storageService = require("./services/storage.service");
 const { sendSuccess, sendError } = require("./utils/apiResponse");
@@ -62,12 +63,18 @@ app.use((req, res) => {
   sendError(res, 404, "ROUTE_NOT_FOUND", "Route not found");
 });
 
-app.listen(PORT, () => {
-  console.log(`High Throughput CP API running on http://localhost:${PORT}`);
-});
+startServer();
 
 function logRequest(req, res, responseTimeMs) {
   const source = res.locals.source ? ` source=${res.locals.source}` : "";
   const error = res.locals.errorCode ? ` error=${res.locals.errorCode}` : "";
   console.log(`${req.method} ${req.originalUrl} ${res.statusCode} ${responseTimeMs}ms${source}${error}`);
+}
+
+async function startServer() {
+  await cacheService.init();
+
+  app.listen(PORT, () => {
+    console.log(`High Throughput CP API running on http://localhost:${PORT}`);
+  });
 }

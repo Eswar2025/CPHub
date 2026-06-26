@@ -8,13 +8,14 @@ const { buildProfileSummary, normalizeHandle } = require("../utils/normalize");
 
 async function getProfile(handle) {
   const key = normalizeHandle(handle);
-  const cachedProfile = cacheService.get(key);
+  const cachedProfile = await cacheService.get(key);
 
   if (cachedProfile) {
     metricsService.increment("cacheHits");
 
     return {
       source: "cache_hit",
+      cacheProvider: cacheService.getProvider(),
       data: cachedProfile,
     };
   }
@@ -25,7 +26,7 @@ async function getProfile(handle) {
 
 async function refreshProfile(handle) {
   const key = normalizeHandle(handle);
-  cacheService.remove(key);
+  await cacheService.remove(key);
 
   return fetchAndStoreProfile(key, "fresh_fetch");
 }
@@ -59,6 +60,7 @@ async function fetchAndStoreProfile(key, source) {
 
       return {
         source: "stale_cache",
+        cacheProvider: cacheService.getProvider(),
         warning: "External API failed. Showing last available stored data.",
         data: storedProfile,
       };
@@ -79,10 +81,11 @@ async function fetchAndStoreProfile(key, source) {
   };
 
   storageService.saveProfile(key, profile);
-  cacheService.set(key, profile);
+  await cacheService.set(key, profile);
 
   return {
     source,
+    cacheProvider: cacheService.getProvider(),
     warning: failures.length > 0 ? "Some platform data could not be fetched." : undefined,
     data: profile,
   };

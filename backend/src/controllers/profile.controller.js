@@ -7,6 +7,7 @@ async function getProfile(req, res) {
 
     sendSuccess(res, {
       source: result.source,
+      cacheProvider: result.cacheProvider,
       warning: result.warning,
       data: result.data,
     });
@@ -26,6 +27,7 @@ async function refreshProfile(req, res) {
 
     sendSuccess(res, {
       source: result.source,
+      cacheProvider: result.cacheProvider,
       warning: result.warning,
       data: result.data,
     });

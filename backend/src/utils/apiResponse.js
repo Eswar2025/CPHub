@@ -15,6 +15,10 @@ function sendSuccess(res, options = {}) {
     res.locals.source = options.source;
   }
 
+  if (options.cacheProvider) {
+    body.cacheProvider = options.cacheProvider;
+  }
+
   if (options.warning) {
     body.warning = options.warning;
   }

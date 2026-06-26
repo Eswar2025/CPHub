@@ -13,7 +13,7 @@
         "friendOfCount": 13602,
         "solvedCount": 1382,
         "source": "real_api",
-        "lastUpdated": "2026-06-25T13:12:35.716Z"
+        "lastUpdated": "2026-06-26T06:32:51.346Z"
       },
       {
         "platform": "leetcode",
@@ -26,7 +26,7 @@
         "friendOfCount": 0,
         "solvedCount": 183,
         "source": "mock_data",
-        "lastUpdated": "2026-06-25T13:12:31.615Z"
+        "lastUpdated": "2026-06-26T06:32:48.798Z"
       },
       {
         "platform": "codechef",
@@ -39,7 +39,7 @@
         "friendOfCount": 0,
         "solvedCount": 280,
         "source": "mock_data",
-        "lastUpdated": "2026-06-25T13:12:31.615Z"
+        "lastUpdated": "2026-06-26T06:32:48.799Z"
       }
     ],
     "summary": {
@@ -47,7 +47,7 @@
       "totalSolved": 1845,
       "activePlatforms": 3
     },
-    "lastUpdated": "2026-06-25T13:12:35.717Z"
+    "lastUpdated": "2026-06-26T06:32:51.346Z"
   },
   "dineshkrishnayeturi": {
     "handle": "dineshkrishnayeturi",
@@ -148,5 +148,55 @@
       "activePlatforms": 3
     },
     "lastUpdated": "2026-06-25T20:22:34.868Z"
+  },
+  "jiangly": {
+    "handle": "jiangly",
+    "platforms": [
+      {
+        "platform": "codeforces",
+        "handle": "jiangly",
+        "rating": 3634,
+        "maxRating": 4039,
+        "rank": "legendary grandmaster",
+        "maxRank": "jiangly",
+        "contribution": 32,
+        "friendOfCount": 45994,
+        "solvedCount": 7269,
+        "source": "real_api",
+        "lastUpdated": "2026-06-26T06:35:03.573Z"
+      },
+      {
+        "platform": "leetcode",
+        "handle": "jiangly",
+        "rating": 1550,
+        "maxRating": 2350,
+        "rank": "mock_rank",
+        "maxRank": "mock_rank",
+        "contribution": 0,
+        "friendOfCount": 0,
+        "solvedCount": 490,
+        "source": "mock_data",
+        "lastUpdated": "2026-06-26T06:34:54.426Z"
+      },
+      {
+        "platform": "codechef",
+        "handle": "jiangly",
+        "rating": 1517,
+        "maxRating": 1567,
+        "rank": "mock_rank",
+        "maxRank": "mock_rank",
+        "contribution": 0,
+        "friendOfCount": 0,
+        "solvedCount": 327,
+        "source": "mock_data",
+        "lastUpdated": "2026-06-26T06:34:54.427Z"
+      }
+    ],
+    "summary": {
+      "bestRating": 3634,
+      "totalSolved": 8086,
+      "activePlatforms": 3
+    },
+    "lastUpdated": "2026-06-26T06:35:03.573Z"
   }
 }
