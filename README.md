@@ -127,3 +127,33 @@ Expected cache behavior:
 - second same profile request: `source` is `cache_hit`
 - refresh request: `source` is `fresh_fetch`
 - profile responses include `cacheProvider` as either `redis` or `memory`
+
+## Demo Flow
+
+1. Start the backend:
+
+```powershell
+cd C:\Users\varap\OneDrive\Desktop\high_throughput_cp_page\high_throughput_cp_page\high_throughput_cp_page\backend
+npm start
+```
+
+2. Open the frontend with VS Code Live Server, or run:
+
+```powershell
+cd C:\Users\varap\OneDrive\Desktop\high_throughput_cp_page\high_throughput_cp_page\high_throughput_cp_page\frontend
+python -m http.server 8080
+```
+
+Then open:
+
+```txt
+http://localhost:8080
+```
+
+3. Search `tourist` to show `cache_miss`, profile cards, platform cards, leaderboard, and metrics.
+
+4. Search `tourist` again to show `cache_hit`.
+
+5. Click `Refresh` to show `fresh_fetch`.
+
+6. Click `Load Leaderboard` and `Load Metrics` during the walkthrough to explain JSON storage, cache counters, response time, and backend reliability.

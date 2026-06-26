@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://localhost:5003/api";
 
 const state = {
   currentHandle: "",
@@ -6,6 +6,7 @@ const state = {
 };
 
 const elements = {
+  apiBaseLabel: document.querySelector("#apiBaseLabel"),
   searchForm: document.querySelector("#searchForm"),
   handleInput: document.querySelector("#handleInput"),
   searchButton: document.querySelector("#searchButton"),
@@ -15,6 +16,8 @@ const elements = {
   messageBox: document.querySelector("#messageBox"),
   healthBadge: document.querySelector("#healthBadge"),
   sourceBadge: document.querySelector("#sourceBadge"),
+  cacheProviderBadge: document.querySelector("#cacheProviderBadge"),
+  profileDetails: document.querySelector("#profileDetails"),
   summaryGrid: document.querySelector("#summaryGrid"),
   platformCards: document.querySelector("#platformCards"),
   platformCount: document.querySelector("#platformCount"),
@@ -23,6 +26,8 @@ const elements = {
   metricsUpdated: document.querySelector("#metricsUpdated"),
   exampleButtons: document.querySelectorAll(".example-button"),
 };
+
+elements.apiBaseLabel.textContent = API_BASE_URL;
 
 elements.searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -63,6 +68,7 @@ async function checkHealth() {
   } catch (error) {
     elements.healthBadge.textContent = "API Offline";
     elements.healthBadge.className = "badge badge-stale";
+    showMessage("Backend is offline. Start the Express API before searching.", "error");
   }
 }
 
@@ -70,16 +76,19 @@ async function searchProfile() {
   const handle = getHandle();
   if (!handle) return;
 
-  setLoading(true, "Loading profile...");
+  setLoading(true, "Loading...");
   state.currentHandle = handle;
 
   try {
     const result = await requestJson(`/profile/${encodeURIComponent(handle)}`);
     renderProfile(result);
-    showMessage(`Loaded ${result.data.handle} from ${formatSource(result.source)}.`, "success");
+    showMessage(
+      `Loaded ${result.data.handle} with ${formatSource(result.source)} using ${formatSource(result.cacheProvider)} cache.`,
+      "success"
+    );
     await Promise.all([loadLeaderboard(false), loadMetrics(false)]);
   } catch (error) {
-    showMessage(error.message, "error");
+    showError(error);
   } finally {
     setLoading(false);
   }
@@ -89,7 +98,7 @@ async function refreshProfile() {
   const handle = getHandle() || state.currentHandle;
   if (!handle) return;
 
-  setLoading(true, "Refreshing profile...");
+  setLoading(true, "Loading...");
   state.currentHandle = handle;
 
   try {
@@ -97,10 +106,13 @@ async function refreshProfile() {
       method: "POST",
     });
     renderProfile(result);
-    showMessage(`Refreshed ${result.data.handle} from ${formatSource(result.source)}.`, "success");
+    showMessage(
+      `Refreshed ${result.data.handle} with ${formatSource(result.source)} using ${formatSource(result.cacheProvider)} cache.`,
+      "success"
+    );
     await Promise.all([loadLeaderboard(false), loadMetrics(false)]);
   } catch (error) {
-    showMessage(error.message, "error");
+    showError(error);
   } finally {
     setLoading(false);
   }
@@ -108,48 +120,61 @@ async function refreshProfile() {
 
 async function loadLeaderboard(showLoading = true) {
   if (showLoading) {
-    elements.leaderboardBody.innerHTML = rowMessage("Loading leaderboard...", 7);
+    elements.leaderboardBody.innerHTML = rowMessage("Loading...", 8);
   }
 
   try {
     const result = await requestJson("/leaderboard");
     renderLeaderboard(result.data || []);
   } catch (error) {
-    elements.leaderboardBody.innerHTML = rowMessage(escapeHtml(error.message), 7);
+    elements.leaderboardBody.innerHTML = rowMessage(escapeHtml(getErrorMessage(error)), 8);
   }
 }
 
 async function loadMetrics(showLoading = true) {
   if (showLoading) {
     elements.metricsUpdated.textContent = "Loading";
-    elements.metricsGrid.innerHTML = `<div class="empty-state">Loading metrics...</div>`;
+    elements.metricsUpdated.className = "badge badge-fresh";
+    elements.metricsGrid.innerHTML = `<div class="empty-state">Loading...</div>`;
   }
 
   try {
     const result = await requestJson("/metrics");
-    renderMetrics(result.data);
+    renderMetrics(result.data || {});
   } catch (error) {
     elements.metricsUpdated.textContent = "Error";
     elements.metricsUpdated.className = "badge badge-stale";
-    elements.metricsGrid.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`;
+    elements.metricsGrid.innerHTML = `<div class="empty-state">${escapeHtml(getErrorMessage(error))}</div>`;
   }
 }
 
 function renderProfile(result) {
-  const profile = result.data;
+  const profile = result.data || {};
   const summary = profile.summary || {};
+  const platforms = profile.platforms || [];
+  const lastUpdated = profile.lastUpdated || getLatestPlatformUpdate(platforms);
 
   elements.sourceBadge.textContent = formatSource(result.source);
-  elements.sourceBadge.className = `badge ${getSourceBadgeClass(result.source)}`;
+  elements.sourceBadge.className = `badge ${getBadgeClass(result.source)}`;
+  elements.cacheProviderBadge.textContent = formatSource(result.cacheProvider || "memory");
+  elements.cacheProviderBadge.className = `badge ${getBadgeClass(result.cacheProvider || "memory")}`;
+
+  elements.profileDetails.innerHTML = [
+    detailCard(profile.handle || "Unknown", "Handle"),
+    detailBadge(result.source, "Source"),
+    detailBadge(result.cacheProvider || "memory", "Cache Provider"),
+    detailCard(`${result.responseTimeMs || 0} ms`, "Response Time"),
+    detailCard(formatDate(lastUpdated), "Last Updated"),
+    result.warning ? warningBox(result.warning) : "",
+  ].join("");
 
   elements.summaryGrid.innerHTML = [
-    statCard(profile.handle, "Handle"),
     statCard(formatNumber(summary.bestRating || 0), "Best Rating"),
     statCard(formatNumber(summary.totalSolved || 0), "Total Solved"),
     statCard(formatNumber(summary.activePlatforms || 0), "Active Platforms"),
+    statCard(`${result.responseTimeMs || 0} ms`, "Response Time"),
   ].join("");
 
-  const platforms = profile.platforms || [];
   elements.platformCount.textContent = `${platforms.length} Platform${platforms.length === 1 ? "" : "s"}`;
   elements.platformCount.className = "badge badge-muted";
 
@@ -160,7 +185,7 @@ function renderProfile(result) {
 
 function renderLeaderboard(rows) {
   if (!rows.length) {
-    elements.leaderboardBody.innerHTML = rowMessage("No searched profiles yet.", 7);
+    elements.leaderboardBody.innerHTML = rowMessage("Search profiles to build the leaderboard.", 8);
     return;
   }
 
@@ -169,11 +194,12 @@ function renderLeaderboard(rows) {
       (row) => `
         <tr>
           <td>${row.rank}</td>
-          <td>${escapeHtml(row.handle)}</td>
+          <td><strong>${escapeHtml(row.handle)}</strong></td>
           <td>${formatNumber(row.rating)}</td>
           <td>${formatNumber(row.maxRating)}</td>
           <td>${formatNumber(row.solved)}</td>
-          <td><span class="badge ${getSourceBadgeClass(row.source)}">${formatSource(row.source)}</span></td>
+          <td>${formatNumber(row.totalSolved)}</td>
+          <td><span class="badge ${getBadgeClass(row.source)}">${formatSource(row.source)}</span></td>
           <td>${formatDate(row.lastUpdated)}</td>
         </tr>
       `
@@ -188,12 +214,13 @@ function renderMetrics(metrics) {
     ["Cache Misses", metrics.cacheMisses],
     ["Fresh Fetches", metrics.freshFetches],
     ["Stale Cache Uses", metrics.staleCacheUses],
-    ["API Failures", metrics.externalApiFailures],
+    ["External API Failures", metrics.externalApiFailures],
+    ["Rate Limited", metrics.rateLimitedRequests],
     ["Avg Response", `${metrics.averageResponseTimeMs || 0} ms`],
   ];
 
   elements.metricsGrid.innerHTML = cards
-    .map(([label, value]) => statCard(formatNumber(value), label))
+    .map(([label, value]) => statCard(formatMetricValue(value), label))
     .join("");
 
   elements.metricsUpdated.textContent = "Updated";
@@ -205,10 +232,10 @@ function platformCard(platform) {
     <article class="platform-card">
       <div class="platform-card-header">
         <div>
-          <h3>${escapeHtml(platform.platform)}</h3>
-          <span class="platform-meta">${escapeHtml(platform.handle)}</span>
+          <h3>${escapeHtml(platform.platform || "platform")}</h3>
+          <span class="platform-meta">${escapeHtml(platform.handle || "unknown")}</span>
         </div>
-        <span class="badge ${getSourceBadgeClass(platform.source)}">${formatSource(platform.source)}</span>
+        <span class="badge ${getBadgeClass(platform.source)}">${formatSource(platform.source)}</span>
       </div>
       <div class="platform-stats">
         <div>
@@ -225,7 +252,7 @@ function platformCard(platform) {
         </div>
         <div>
           <strong>${formatNumber(platform.solvedCount)}</strong>
-          <span class="platform-meta">Solved</span>
+          <span class="platform-meta">Solved Count</span>
         </div>
       </div>
       <span class="platform-meta">Last updated ${formatDate(platform.lastUpdated)}</span>
@@ -242,6 +269,28 @@ function statCard(value, label) {
   `;
 }
 
+function detailCard(value, label) {
+  return `
+    <div class="detail-card">
+      <span class="detail-value">${escapeHtml(String(value))}</span>
+      <span class="detail-label">${escapeHtml(label)}</span>
+    </div>
+  `;
+}
+
+function detailBadge(source, label) {
+  return `
+    <div class="detail-card">
+      <span class="badge ${getBadgeClass(source)}">${formatSource(source)}</span>
+      <span class="detail-label">${escapeHtml(label)}</span>
+    </div>
+  `;
+}
+
+function warningBox(message) {
+  return `<div class="warning-box">${escapeHtml(message)}</div>`;
+}
+
 async function requestJson(path, options = {}) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
@@ -250,10 +299,19 @@ async function requestJson(path, options = {}) {
     ...options,
   });
 
-  const payload = await response.json();
+  let payload = {};
+
+  try {
+    payload = await response.json();
+  } catch (error) {
+    payload = {};
+  }
 
   if (!response.ok || payload.success === false) {
-    throw new Error(payload.message || "Request failed");
+    const error = new Error(payload.error?.message || payload.message || "Request failed");
+    error.status = response.status;
+    error.code = payload.error?.code || "REQUEST_FAILED";
+    throw error;
   }
 
   return payload;
@@ -274,12 +332,22 @@ function setLoading(isLoading, message = "") {
   state.isLoading = isLoading;
   elements.searchButton.disabled = isLoading;
   elements.refreshButton.disabled = isLoading;
+  elements.loadLeaderboardButton.disabled = isLoading;
+  elements.loadMetricsButton.disabled = isLoading;
   elements.searchButton.textContent = isLoading ? "Loading..." : "Search";
-  elements.refreshButton.textContent = isLoading ? "Working..." : "Refresh";
+  elements.refreshButton.textContent = isLoading ? "Loading..." : "Refresh";
 
   if (message) {
-    showMessage(message);
+    showMessage(message, "loading");
   }
+}
+
+function showError(error) {
+  const message = error.status === 429
+    ? "Rate limit reached. Please wait a minute before trying again."
+    : getErrorMessage(error);
+
+  showMessage(message, "error");
 }
 
 function showMessage(message, type = "") {
@@ -295,12 +363,14 @@ function rowMessage(message, colspan) {
   `;
 }
 
-function getSourceBadgeClass(source) {
+function getBadgeClass(source) {
   const classes = {
     cache_hit: "badge-hit",
     cache_miss: "badge-miss",
     fresh_fetch: "badge-fresh",
     stale_cache: "badge-stale",
+    redis: "badge-redis",
+    memory: "badge-memory",
     real_api: "badge-real",
     mock_data: "badge-mock",
   };
@@ -310,7 +380,7 @@ function getSourceBadgeClass(source) {
 
 function formatSource(source) {
   if (!source) return "Unknown";
-  return source
+  return String(source)
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
@@ -319,18 +389,43 @@ function formatSource(source) {
 function formatDate(value) {
   if (!value) return "Not available";
 
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "Not available";
+  }
+
   return new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",
     timeStyle: "short",
-  }).format(new Date(value));
+  }).format(date);
 }
 
 function formatNumber(value) {
+  return Number(value || 0).toLocaleString();
+}
+
+function formatMetricValue(value) {
   if (typeof value === "string" && value.endsWith(" ms")) {
     return value;
   }
 
-  return Number(value || 0).toLocaleString();
+  return formatNumber(value);
+}
+
+function getLatestPlatformUpdate(platforms) {
+  return platforms
+    .map((platform) => platform.lastUpdated)
+    .filter(Boolean)
+    .sort()
+    .at(-1);
+}
+
+function getErrorMessage(error) {
+  if (error.code && error.message) {
+    return `${error.code}: ${error.message}`;
+  }
+
+  return error.message || "Something went wrong.";
 }
 
 function escapeHtml(value) {
