@@ -5,7 +5,9 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "node --watch src/server.js"
+    "dev": "node --watch src/server.js",
+    "bench:profile": "autocannon -c 20 -d 10 http://localhost:5003/api/profile/tourist",
+    "bench:metrics": "autocannon -c 20 -d 10 http://localhost:5003/api/metrics"
   },
   "keywords": [
     "express",
@@ -17,5 +19,8 @@
   "dependencies": {
     "express": "^4.19.2",
     "redis": "^6.0.1"
+  },
+  "devDependencies": {
+    "autocannon": "^8.0.0"
   }
 }

@@ -128,6 +128,42 @@ Expected cache behavior:
 - refresh request: `source` is `fresh_fetch`
 - profile responses include `cacheProvider` as either `redis` or `memory`
 
+## Benchmarking
+
+Load testing should focus on cached backend responses. Do not repeatedly benchmark fresh Codeforces fetches or the refresh endpoint.
+
+Start backend with a higher local rate limit:
+
+```powershell
+cd C:\Users\varap\OneDrive\Desktop\high_throughput_cp_page\high_throughput_cp_page\high_throughput_cp_page\backend
+$env:PORT=5003
+$env:RATE_LIMIT_MAX_REQUESTS=100000
+$env:RATE_LIMIT_WINDOW_MS=60000
+npm start
+```
+
+Warm the profile cache:
+
+```powershell
+curl.exe http://localhost:5003/api/profile/tourist
+curl.exe http://localhost:5003/api/profile/tourist
+```
+
+The second response should show `source: "cache_hit"`.
+
+Run benchmarks from the backend folder:
+
+```powershell
+npm run bench:profile
+npm run bench:metrics
+```
+
+Record measured numbers in:
+
+```txt
+docs/load-test-results.md
+```
+
 ## Demo Flow
 
 1. Start the backend:

@@ -1,8 +1,8 @@
 const metricsService = require("../services/metrics.service");
 const { sendError } = require("../utils/apiResponse");
 
-const WINDOW_MS = 60 * 1000;
-const MAX_REQUESTS = 30;
+const WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS) || 60 * 1000;
+const MAX_REQUESTS = Number(process.env.RATE_LIMIT_MAX_REQUESTS) || 30;
 const requestsByIp = new Map();
 
 function rateLimiter(req, res, next) {
