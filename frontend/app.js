@@ -1,4 +1,9 @@
-const API_BASE_URL = "http://localhost:5003/api";
+const LOCAL_API_BASE_URL = "https://cp-hub-backend-qxjb.onrender.com/api";
+const PRODUCTION_API_BASE_URL = "https://cp-hub-backend-qxjb.onrender.com/api";
+const LOCAL_HOSTNAMES = new Set(["localhost", "127.0.0.1", "::1", "[::1]"]);
+const isLocalDevelopment =
+  window.location.protocol === "file:" || LOCAL_HOSTNAMES.has(window.location.hostname);
+const API_BASE_URL = isLocalDevelopment ? LOCAL_API_BASE_URL : PRODUCTION_API_BASE_URL;
 const RECENT_HANDLES_KEY = "cp_metrics_recent_handles";
 
 const state = {
