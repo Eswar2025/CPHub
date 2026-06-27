@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CP Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -14,7 +13,7 @@
           <span class="brand-mark">CP</span>
           <span>
             <strong>CP Hub</strong>
-            <small>High-Throughput CP Dashboard</small>
+            <small>Backend demo</small>
           </span>
         </a>
 
@@ -29,7 +28,7 @@
         </nav>
 
         <div class="sidebar-footer">
-          <span>Local API</span>
+          <span><i aria-hidden="true"></i> Local API</span>
           <strong id="apiBaseLabel">http://localhost:5003/api</strong>
         </div>
       </aside>
@@ -37,61 +36,70 @@
       <main class="main-content">
         <section id="overview" class="hero-section">
           <span class="hero-kicker">High-Throughput Competitive Programming Dashboard</span>
-          <h1>CP Hub</h1>
+          <h1 class="hero-title">CP Hub</h1>
           <p class="hero-subtitle">
             Search coding handles, view cached profile metrics, and track backend performance in one dashboard.
           </p>
           <div class="status-chip-row" aria-label="Project status">
             <span id="healthBadge" class="badge badge-muted">Checking API</span>
             <span class="badge badge-redis">Redis Cache</span>
-            <span class="badge badge-fresh">Rate Limited</span>
-            <span class="badge badge-memory">Load Tested</span>
+            <span class="badge badge-tested">Load Tested</span>
             <span class="badge badge-real">Codeforces API</span>
           </div>
         </section>
 
-        <section id="search" class="panel search-panel">
-          <div class="section-heading centered-heading">
-            <div>
-              <span class="section-kicker">Search</span>
-              <h2>Find a CP profile</h2>
-              <p>Use a Codeforces handle to populate the profile, platform cards, leaderboard, and metrics.</p>
-            </div>
+        <section id="search" class="search-section">
+          <div class="search-heading">
+            <h2>Find a CP profile</h2>
           </div>
 
-          <form id="searchForm" class="search-form">
-            <div class="search-bar-shell">
-              <label class="search-control" for="handleInput">
-                <span class="search-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" role="img">
-                    <path d="M10.8 18.1a7.3 7.3 0 1 1 0-14.6 7.3 7.3 0 0 1 0 14.6Zm0-2a5.3 5.3 0 1 0 0-10.6 5.3 5.3 0 0 0 0 10.6Zm5.6.7 3.2 3.2" />
-                  </svg>
-                </span>
-                <input
-                  id="handleInput"
-                  type="text"
-                  value="tourist"
-                  placeholder="Search a Codeforces handle..."
-                  autocomplete="off"
-                />
-              </label>
-              <button id="searchButton" class="button button-primary" type="submit">Search</button>
+          <form id="searchForm" class="search-form" role="search">
+            <div class="unified-search">
+              <button
+                id="searchButton"
+                class="search-segment search-submit"
+                type="submit"
+                aria-label="Search profile"
+                title="Search profile"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M10.8 18.1a7.3 7.3 0 1 1 0-14.6 7.3 7.3 0 0 1 0 14.6Zm0-2a5.3 5.3 0 1 0 0-10.6 5.3 5.3 0 0 0 0 10.6Zm5.6.7 3.2 3.2" />
+                </svg>
+              </button>
+              <input
+                id="handleInput"
+                type="text"
+                value="tourist"
+                placeholder="Search CP profile here"
+                aria-label="Codeforces handle"
+                autocomplete="off"
+              />
+              <button
+                id="refreshButton"
+                class="search-segment refresh-submit"
+                type="button"
+                aria-label="Refresh profile"
+                title="Refresh profile"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20 11a8.1 8.1 0 0 0-14.9-4.4L3 9m0 0V4m0 5h5M4 13a8.1 8.1 0 0 0 14.9 4.4L21 15m0 0v5m0-5h-5" />
+                </svg>
+              </button>
             </div>
 
-            <div class="search-actions">
-              <button id="refreshButton" class="button icon-button" type="button" title="Fresh fetch from backend">
-                Refresh
-              </button>
-              <details id="actionsDropdown" class="actions-dropdown">
-                <summary class="button button-secondary">Actions</summary>
-                <div class="actions-menu">
-                  <button id="loadLeaderboardButton" type="button">Load Leaderboard</button>
-                  <button id="loadMetricsButton" type="button">Load Metrics</button>
-                  <button id="clearResultsButton" type="button">Clear Results</button>
-                </div>
-              </details>
-            </div>
+            <details id="actionsDropdown" class="actions-dropdown">
+              <summary class="button button-secondary">Actions</summary>
+              <div class="actions-menu">
+                <button id="loadLeaderboardButton" type="button">Load Leaderboard</button>
+                <button id="loadMetricsButton" type="button">Load Metrics</button>
+                <button id="clearResultsButton" type="button">Clear Results</button>
+              </div>
+            </details>
           </form>
+
+          <p class="search-note">
+            Use a Codeforces handle to populate the profile, platform cards, leaderboard, and metrics.
+          </p>
 
           <div class="example-row" aria-label="Example handles">
             <span>Try</span>
@@ -99,13 +107,9 @@
             <button class="example-button" type="button" data-handle="Petr">Petr</button>
             <button class="example-button" type="button" data-handle="jiangly">jiangly</button>
           </div>
-
-          <p class="demo-note">
-            Demo: Search tourist once for cache miss, search again for cache hit, then refresh for fresh fetch.
-          </p>
         </section>
 
-        <div id="messageBox" class="message hidden" role="status"></div>
+        <div id="messageBox" class="message hidden" role="status" aria-live="polite"></div>
 
         <section id="history" class="panel history-panel">
           <div class="section-heading compact-heading">

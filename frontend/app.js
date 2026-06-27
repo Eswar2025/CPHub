@@ -256,13 +256,13 @@ function renderLeaderboard(rows) {
 function renderMetrics(metrics) {
   const cards = [
     ["Total Requests", metrics.totalRequests, ""],
-    ["Cache Hits", metrics.cacheHits, "metric-highlight"],
-    ["Cache Misses", metrics.cacheMisses, "metric-highlight"],
+    ["Cache Hits", metrics.cacheHits, "metric-accent-green"],
+    ["Cache Misses", metrics.cacheMisses, "metric-accent-amber"],
     ["Fresh Fetches", metrics.freshFetches, ""],
     ["Stale Cache Uses", metrics.staleCacheUses, ""],
     ["External API Failures", metrics.externalApiFailures, ""],
-    ["Rate Limited", metrics.rateLimitedRequests, "metric-highlight"],
-    ["Avg Response", `${metrics.averageResponseTimeMs || 0} ms`, "metric-highlight"],
+    ["Rate Limited", metrics.rateLimitedRequests, "metric-accent-red"],
+    ["Avg Response", `${metrics.averageResponseTimeMs || 0} ms`, "metric-accent-blue"],
   ];
 
   elements.metricsGrid.innerHTML = cards
@@ -408,7 +408,8 @@ function setLoading(isLoading, message = "") {
   elements.loadMetricsButton.disabled = isLoading;
   elements.clearResultsButton.disabled = isLoading;
   elements.actionsDropdown.classList.toggle("is-disabled", isLoading);
-  elements.searchButton.textContent = isLoading ? "Loading..." : "Search";
+  elements.searchButton.setAttribute("aria-label", isLoading ? "Loading profile" : "Search profile");
+  elements.searchButton.title = isLoading ? "Loading profile" : "Search profile";
 
   if (isLoading) {
     closeActionsMenu();
