@@ -95,4 +95,5 @@ module.exports = {
   getLatestSnapshotsForStudent,
   getLatestSnapshotForStudentPlatform,
   listLatestSnapshotsByPlatform,
+  getLatestByPlatform,
 };

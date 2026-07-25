@@ -5,6 +5,8 @@ const profileRoutes = require("./routes/profile.routes");
 const leaderboardRoutes = require("./routes/leaderboard.routes");
 const metricsRoutes = require("./routes/metrics.routes");
 const v2StudentsRoutes = require("./routes/v2StudentsRoutes");
+const v2ScoreRoutes = require("./routes/v2ScoreRoutes");
+const v2LeaderboardRoutes = require("./routes/v2LeaderboardRoutes");
 const rateLimiter = require("./middleware/rateLimiter");
 const cacheService = require("./services/cache.service");
 const metricsService = require("./services/metrics.service");
@@ -71,6 +73,8 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/leaderboard", leaderboardRoutes);
 app.use("/api/metrics", metricsRoutes);
 app.use("/api/v2/students", v2StudentsRoutes);
+app.use("/api/v2/score", v2ScoreRoutes);
+app.use("/api/v2/leaderboard", v2LeaderboardRoutes);
 
 app.use((req, res) => {
   sendError(res, 404, "ROUTE_NOT_FOUND", "Route not found");

@@ -2,7 +2,7 @@
 
 This document defines v2 endpoints. It does not change the current v1 API.
 
-Phase `v2-student-apis` has implemented the student and platform-handle foundation under `/api/v2/students`. Phase `v2-selected-refresh` has implemented selected-platform Codeforces refresh and PostgreSQL `ProfileSnapshot` storage. v2 leaderboard migration and scoring endpoints are still pending.
+Phase `v2-student-apis` has implemented the student and platform-handle foundation under `/api/v2/students`. Phase `v2-selected-refresh` has implemented selected-platform Codeforces refresh and PostgreSQL `ProfileSnapshot` storage. Phase `v2-scoring-leaderboard` has implemented explainable scoring and PostgreSQL-backed v2 leaderboards.
 
 ## Student Endpoints
 
@@ -33,17 +33,19 @@ Phase `v2-student-apis` has implemented the student and platform-handle foundati
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
-| `GET` | `/api/leaderboard?platform=codeforces` | Codeforces leaderboard |
-| `GET` | `/api/leaderboard?platform=leetcode` | LeetCode leaderboard |
-| `GET` | `/api/leaderboard?platform=codechef` | CodeChef leaderboard |
-| `GET` | `/api/leaderboard?platform=overall` | Overall coding-score leaderboard |
+| `GET` | `/api/v2/leaderboard?platform=overall` | Implemented: rank students by saved `CodingScore.overallScore` |
+| `GET` | `/api/v2/leaderboard?platform=codeforces` | Implemented: rank students by latest Codeforces snapshots |
+| `GET` | `/api/v2/leaderboard?platform=leetcode` | Implemented empty-state: returns no rows until snapshots exist |
+| `GET` | `/api/v2/leaderboard?platform=codechef` | Implemented empty-state: returns no rows until snapshots exist |
 
 ## Metrics And Score Endpoints
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
 | `GET` | `/api/metrics` | Current backend/system metrics |
-| `GET` | `/api/score/:studentId` | Latest explainable coding score for one student |
+| `GET` | `/api/v2/score/:studentId` | Implemented: latest explainable coding score for one student |
+| `POST` | `/api/v2/score/:studentId/recalculate` | Implemented: calculate and save score from latest snapshots |
+| `POST` | `/api/v2/score/recalculate-all` | Implemented: calculate and save scores for all students with snapshots |
 
 ## Selected-Platform Refresh
 

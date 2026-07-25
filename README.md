@@ -272,6 +272,10 @@ The v2 refresh endpoint can refresh enabled Codeforces handles and store normali
 
 The existing v1 routes still work without `DATABASE_URL`. JSON storage remains active for v1 profile search, leaderboard, and metrics until the migration phase intentionally replaces those reads and writes with PostgreSQL.
 
+## v2 Scoring and Leaderboard
+
+The v2 scoring engine calculates an explainable heuristic score from the latest PostgreSQL profile snapshots. It is guidance for students and coordinators, not a hiring decision. The overall v2 leaderboard uses saved `CodingScore` rows, while platform leaderboards read latest `ProfileSnapshot` records without calling external APIs.
+
 ## Future Improvements
 
 - Replace JSON storage with PostgreSQL or MongoDB.
