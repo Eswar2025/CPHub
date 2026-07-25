@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const profileRoutes = require("./routes/profile.routes");
 const leaderboardRoutes = require("./routes/leaderboard.routes");
