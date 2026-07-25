@@ -249,6 +249,12 @@ Do not repeatedly benchmark fresh fetches or refresh endpoints because those can
 - The frontend is intentionally vanilla and does not include authentication or admin workflows.
 - Benchmark results are from a local machine and should not be treated as deployed production performance.
 
+## CP Hub v2 Roadmap
+
+CP Hub v2 will evolve this profile-search prototype into a college coding analytics platform. The next migration adds PostgreSQL-backed student records, platform-specific handle mapping, a college leaderboard, and an explainable scoring engine.
+
+Deployment should keep the current Vercel frontend, Render backend, and Upstash Redis cache, while adding PostgreSQL as the durable source of truth. Upstash Redis remains a cache layer for fast repeated reads and external API protection, not the system of record.
+
 ## Future Improvements
 
 - Replace JSON storage with PostgreSQL or MongoDB.

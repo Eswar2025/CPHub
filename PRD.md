@@ -32,6 +32,8 @@ The project should look simple on the frontend but should demonstrate strong bac
 
 The goal is not to build a huge production app. The goal is to build a working, explainable, resume-ready prototype within 2–3 days.
 
+v2 direction: college coding analytics platform with PostgreSQL-backed student records and platform-specific handle mapping.
+
 ## 3. User Context
 
 This project is being built by a CSE student for internship resume preparation.
