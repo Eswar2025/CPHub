@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Student {
+  id         String            @id @default(cuid())
+  name       String
+  rollNumber String?           @unique
+  email      String?
+  branch     String?
+  year       Int?
+  section    String?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  handles    PlatformHandle[]
+  snapshots  ProfileSnapshot[]
+  score      CodingScore?
+}
+
+model PlatformHandle {
+  id        String   @id @default(cuid())
+  studentId String
+  platform  String
+  handle    String
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, platform])
+  @@index([platform, handle])
+}
+
+model ProfileSnapshot {
+  id          String   @id @default(cuid())
+  studentId   String
+  platform    String
+  handle      String
+  rating      Int?
+  maxRating   Int?
+  rank        String?
+  solvedCount Int?
+  contests    Int?
+  rawData     Json?
+  source      String
+  fetchedAt   DateTime @default(now())
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([platform])
+  @@index([fetchedAt])
+}
+
+model CodingScore {
+  id               String   @id @default(cuid())
+  studentId        String   @unique
+  overallScore     Int
+  ratingScore      Int
+  solvedScore      Int
+  activityScore    Int
+  consistencyScore Int
+  review           String?
+  calculatedAt     DateTime @default(now())
+  student          Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model SystemMetric {
+  id                  String   @id @default(cuid())
+  totalRequests       Int      @default(0)
+  cacheHits           Int      @default(0)
+  cacheMisses         Int      @default(0)
+  freshFetches        Int      @default(0)
+  staleCacheUses      Int      @default(0)
+  externalApiFailures Int      @default(0)
+  rateLimitedRequests Int      @default(0)
+  totalResponseTimeMs Int      @default(0)
+  updatedAt           DateTime @updatedAt
+  createdAt           DateTime @default(now())
+}

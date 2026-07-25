@@ -6,6 +6,7 @@ const rateLimiter = require("./middleware/rateLimiter");
 const cacheService = require("./services/cache.service");
 const metricsService = require("./services/metrics.service");
 const storageService = require("./services/storage.service");
+const dbHealthService = require("./services/dbHealthService");
 const { sendSuccess, sendError } = require("./utils/apiResponse");
 
 const app = express();
@@ -44,13 +45,21 @@ app.use((req, res, next) => {
 
 app.use(rateLimiter);
 
-app.get("/api/health", (req, res) => {
+app.get("/api/health", async (req, res) => {
+  const database = await dbHealthService.getDatabaseHealth();
+
   sendSuccess(res, {
     data: {
       message: "High Throughput CP API is running",
+      status: "ok",
+      cacheProvider: cacheService.getProvider(),
+      database,
     },
     extra: {
       message: "High Throughput CP API is running",
+      status: "ok",
+      cacheProvider: cacheService.getProvider(),
+      database,
     },
   });
 });

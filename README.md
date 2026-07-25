@@ -103,12 +103,15 @@ Defaults are shown in `backend/.env.example`:
 ```txt
 PORT=5003
 REDIS_URL=redis://localhost:6379
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"
 CACHE_TTL_SECONDS=300
 RATE_LIMIT_WINDOW_MS=60000
 RATE_LIMIT_MAX_REQUESTS=30
 ```
 
 This project reads environment variables from the terminal process. If you create a `.env` file, load those values into your shell before running the backend.
+
+`DATABASE_URL` is optional in the current v2 foundation phase. If it is missing, SQL features are disabled and the existing v1 routes continue using JSON storage.
 
 ## Install Backend Dependencies
 
@@ -254,6 +257,12 @@ Do not repeatedly benchmark fresh fetches or refresh endpoints because those can
 CP Hub v2 will evolve this profile-search prototype into a college coding analytics platform. The next migration adds PostgreSQL-backed student records, platform-specific handle mapping, a college leaderboard, and an explainable scoring engine.
 
 Deployment should keep the current Vercel frontend, Render backend, and Upstash Redis cache, while adding PostgreSQL as the durable source of truth. Upstash Redis remains a cache layer for fast repeated reads and external API protection, not the system of record.
+
+## Database Foundation
+
+The v2 database foundation adds a PostgreSQL and Prisma schema for future student records, platform-specific handles, profile snapshots, scoring, and system metrics. Redis remains the cache layer, and JSON storage remains active for the current v1 profile, leaderboard, and metrics routes until a later migration phase replaces those reads and writes.
+
+`DATABASE_URL` is optional in this phase. Without it, `/api/health` reports database status as disabled and the existing deployed behavior continues.
 
 ## Future Improvements
 

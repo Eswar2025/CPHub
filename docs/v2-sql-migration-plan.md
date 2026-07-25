@@ -2,7 +2,9 @@
 
 ## Goal
 
-Migrate CP Hub from JSON file persistence to PostgreSQL while keeping the existing v1 backend behavior stable during the transition. This phase is a plan only; it should not add database code or change API behavior yet.
+Migrate CP Hub from JSON file persistence to PostgreSQL while keeping the existing v1 backend behavior stable during the transition. Database foundation can be added before the route migration, but v1 JSON-backed behavior should remain active until the replacement is intentionally implemented and tested.
+
+Phase `v2-prisma-foundation` adds the Prisma schema and database health checks but does not replace JSON storage yet.
 
 ## Why JSON Was Okay For The Prototype
 
