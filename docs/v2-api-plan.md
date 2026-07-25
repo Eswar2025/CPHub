@@ -2,7 +2,7 @@
 
 This document defines v2 endpoints. It does not change the current v1 API.
 
-Phase `v2-student-apis` has implemented the student and platform-handle foundation under `/api/v2/students`. Profile refresh migration, v2 leaderboard migration, and scoring endpoints are still pending.
+Phase `v2-student-apis` has implemented the student and platform-handle foundation under `/api/v2/students`. Phase `v2-selected-refresh` has implemented selected-platform Codeforces refresh and PostgreSQL `ProfileSnapshot` storage. v2 leaderboard migration and scoring endpoints are still pending.
 
 ## Student Endpoints
 
@@ -13,6 +13,7 @@ Phase `v2-student-apis` has implemented the student and platform-handle foundati
 | `GET` | `/api/v2/students/:id` | Implemented foundation: get one student with handles, latest snapshots, and score |
 | `PUT` | `/api/v2/students/:id` | Implemented foundation: update student details |
 | `DELETE` | `/api/v2/students/:id` | Implemented foundation: delete a student record |
+| `GET` | `/api/v2/students/:id/snapshots` | Implemented: list latest profile snapshots for a student, optionally filtered by platform |
 
 ## Platform Handle Endpoints
 
@@ -25,7 +26,7 @@ Phase `v2-student-apis` has implemented the student and platform-handle foundati
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
-| `POST` | `/api/v2/students/:id/refresh` | Pending: refresh selected enabled platforms for one student |
+| `POST` | `/api/v2/students/:id/refresh` | Implemented: refresh selected enabled platforms for one student and store snapshots |
 | `POST` | `/api/v2/students/bulk-refresh` | Pending: refresh selected enabled platforms for a batch of students |
 
 ## Leaderboard Endpoints
@@ -46,15 +47,25 @@ Phase `v2-student-apis` has implemented the student and platform-handle foundati
 
 ## Selected-Platform Refresh
 
-The refresh endpoint should support refreshing one platform or all enabled platforms. Example request body:
+The refresh endpoint supports refreshing one platform or all enabled platforms. Example request body:
 
 ```json
 {
-  "platforms": ["codeforces"]
+  "platform": "codeforces"
 }
 ```
 
-If `platforms` is omitted, the backend can refresh all enabled handles for the student. The backend should skip disabled handles.
+If `platform` is omitted, the backend refreshes all enabled handles for the student. Disabled handles are skipped. Codeforces is the only real refresh integration in this phase; successful Codeforces refreshes store normalized `ProfileSnapshot` rows in PostgreSQL.
+
+LeetCode and CodeChef are intentionally not refreshed through external APIs yet. If enabled, they return skipped results:
+
+```json
+{
+  "platform": "leetcode",
+  "status": "skipped",
+  "reason": "Adapter not enabled yet"
+}
+```
 
 ## Platform-Specific Handles
 

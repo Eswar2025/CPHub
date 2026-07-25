@@ -1,4 +1,5 @@
 const { prisma, isDatabaseConfigured } = require("./dbClient");
+const profileSnapshotService = require("./profileSnapshotService");
 
 const SUPPORTED_PLATFORMS = new Set(["codeforces", "leetcode", "codechef"]);
 const STUDENT_FIELDS = ["name", "rollNumber", "email", "branch", "year", "section"];
@@ -41,19 +42,26 @@ async function createStudent(input) {
 async function getStudentById(id) {
   ensureDatabaseEnabled();
 
-  return prisma.student.findUnique({
+  const student = await prisma.student.findUnique({
     where: { id },
     include: {
       handles: {
         orderBy: { platform: "asc" },
       },
-      snapshots: {
-        orderBy: { fetchedAt: "desc" },
-        take: 5,
-      },
       score: true,
     },
   });
+
+  if (!student) {
+    return null;
+  }
+
+  const snapshots = await profileSnapshotService.getLatestSnapshotsForStudent(id);
+
+  return {
+    ...student,
+    snapshots,
+  };
 }
 
 async function updateStudent(id, input) {
@@ -243,6 +251,7 @@ module.exports = {
   getStudentById,
   updateStudent,
   deleteStudent,
+  assertStudentExists,
   upsertPlatformHandle,
   updatePlatformHandle,
 };

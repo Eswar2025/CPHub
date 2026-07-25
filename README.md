@@ -268,6 +268,8 @@ The v2 database foundation adds a PostgreSQL and Prisma schema for future studen
 
 The v2 student and platform-handle APIs are available under `/api/v2/students`. These routes require `DATABASE_URL`; if the database is not configured, they return `DATABASE_DISABLED` with HTTP 503.
 
+The v2 refresh endpoint can refresh enabled Codeforces handles and store normalized profile snapshots in PostgreSQL. LeetCode and CodeChef remain adapter placeholders for now, so v2 refresh returns them as skipped instead of calling unstable external integrations.
+
 The existing v1 routes still work without `DATABASE_URL`. JSON storage remains active for v1 profile search, leaderboard, and metrics until the migration phase intentionally replaces those reads and writes with PostgreSQL.
 
 ## Future Improvements

@@ -1,8 +1,11 @@
 const express = require("express");
 const studentService = require("../services/studentService");
+const profileSnapshotService = require("../services/profileSnapshotService");
+const v2RefreshService = require("../services/v2RefreshService");
 const { isDatabaseConfigured } = require("../services/dbClient");
 
 const router = express.Router();
+const SUPPORTED_PLATFORMS = new Set(["codeforces", "leetcode", "codechef"]);
 
 router.use((req, res, next) => {
   if (!isDatabaseConfigured()) {
@@ -49,6 +52,21 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.get("/:id/snapshots", async (req, res) => {
+  try {
+    await studentService.assertStudentExists(req.params.id);
+
+    const platform = req.query.platform ? normalizePlatform(req.query.platform) : null;
+    const snapshots = platform
+      ? await profileSnapshotService.getLatestSnapshotForStudentPlatform(req.params.id, platform)
+      : await profileSnapshotService.getLatestSnapshotsForStudent(req.params.id);
+
+    sendSuccess(res, platform ? (snapshots ? [snapshots] : []) : snapshots);
+  } catch (error) {
+    sendRouteError(res, error);
+  }
+});
+
 router.put("/:id", async (req, res) => {
   try {
     const student = await studentService.updateStudent(req.params.id, req.body);
@@ -62,6 +80,18 @@ router.delete("/:id", async (req, res) => {
   try {
     await studentService.deleteStudent(req.params.id);
     sendSuccess(res, { message: "Student deleted" });
+  } catch (error) {
+    sendRouteError(res, error);
+  }
+});
+
+router.post("/:id/refresh", async (req, res) => {
+  try {
+    const result = await v2RefreshService.refreshStudentPlatforms(req.params.id, {
+      platform: req.body?.platform,
+    });
+
+    sendSuccess(res, result);
   } catch (error) {
     sendRouteError(res, error);
   }
@@ -129,6 +159,19 @@ function sendRouteError(res, error) {
     error.code || "V2_STUDENT_API_ERROR",
     error.message || "Student API request failed"
   );
+}
+
+function normalizePlatform(platform) {
+  const cleaned = String(platform || "").trim().toLowerCase();
+
+  if (!SUPPORTED_PLATFORMS.has(cleaned)) {
+    const error = new Error("platform must be one of codeforces, leetcode, codechef");
+    error.code = "INVALID_PLATFORM";
+    error.statusCode = 400;
+    throw error;
+  }
+
+  return cleaned;
 }
 
 module.exports = router;

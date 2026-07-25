@@ -36,6 +36,8 @@ Maps a student to a handle on a selected coding platform.
 
 Stores fetched platform data at a point in time.
 
+Phase `v2-selected-refresh` writes Codeforces snapshots into this table from the official Codeforces adapter. LeetCode and CodeChef snapshots should wait until stable adapters are added.
+
 | Field | Purpose |
 | --- | --- |
 | `id` | Unique snapshot identifier |
