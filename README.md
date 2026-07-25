@@ -264,6 +264,12 @@ The v2 database foundation adds a PostgreSQL and Prisma schema for future studen
 
 `DATABASE_URL` is optional in this phase. Without it, `/api/health` reports database status as disabled and the existing deployed behavior continues.
 
+## v2 Student APIs
+
+The v2 student and platform-handle APIs are available under `/api/v2/students`. These routes require `DATABASE_URL`; if the database is not configured, they return `DATABASE_DISABLED` with HTTP 503.
+
+The existing v1 routes still work without `DATABASE_URL`. JSON storage remains active for v1 profile search, leaderboard, and metrics until the migration phase intentionally replaces those reads and writes with PostgreSQL.
+
 ## Future Improvements
 
 - Replace JSON storage with PostgreSQL or MongoDB.

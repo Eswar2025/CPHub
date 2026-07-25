@@ -6,6 +6,8 @@ Migrate CP Hub from JSON file persistence to PostgreSQL while keeping the existi
 
 Phase `v2-prisma-foundation` adds the Prisma schema and database health checks but does not replace JSON storage yet.
 
+Phase `v2-student-apis` adds Prisma-backed student and platform-handle APIs under `/api/v2/students`. It still does not replace v1 profile, leaderboard, or metrics JSON storage.
+
 ## Why JSON Was Okay For The Prototype
 
 JSON files were a good v1 choice because the first goal was to build a working, explainable backend quickly. They made local setup simple, avoided database provisioning, and kept stored profiles and metrics easy to inspect during demos.

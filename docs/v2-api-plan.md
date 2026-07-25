@@ -1,30 +1,32 @@
 # CP Hub v2 API Plan
 
-This document defines planned v2 endpoints. It does not change the current v1 API.
+This document defines v2 endpoints. It does not change the current v1 API.
+
+Phase `v2-student-apis` has implemented the student and platform-handle foundation under `/api/v2/students`. Profile refresh migration, v2 leaderboard migration, and scoring endpoints are still pending.
 
 ## Student Endpoints
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
-| `GET` | `/api/students` | List students with filters such as branch, year, or section |
-| `POST` | `/api/students` | Create a student record |
-| `GET` | `/api/students/:id` | Get one student with handles, latest snapshots, and score |
-| `PUT` | `/api/students/:id` | Update student details |
-| `DELETE` | `/api/students/:id` | Delete or deactivate a student record |
+| `GET` | `/api/v2/students` | Implemented foundation: list students with platform handles |
+| `POST` | `/api/v2/students` | Implemented foundation: create a student record |
+| `GET` | `/api/v2/students/:id` | Implemented foundation: get one student with handles, latest snapshots, and score |
+| `PUT` | `/api/v2/students/:id` | Implemented foundation: update student details |
+| `DELETE` | `/api/v2/students/:id` | Implemented foundation: delete a student record |
 
 ## Platform Handle Endpoints
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
-| `POST` | `/api/students/:id/handles` | Add a platform-specific handle for a student |
-| `PUT` | `/api/students/:id/handles/:platform` | Update, enable, disable, or replace a platform handle |
+| `POST` | `/api/v2/students/:id/handles` | Implemented foundation: add or upsert a platform-specific handle for a student |
+| `PUT` | `/api/v2/students/:id/handles/:platform` | Implemented foundation: update, enable, disable, or replace a platform handle |
 
 ## Refresh Endpoints
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
-| `POST` | `/api/students/:id/refresh` | Refresh selected enabled platforms for one student |
-| `POST` | `/api/students/bulk-refresh` | Refresh selected enabled platforms for a batch of students |
+| `POST` | `/api/v2/students/:id/refresh` | Pending: refresh selected enabled platforms for one student |
+| `POST` | `/api/v2/students/bulk-refresh` | Pending: refresh selected enabled platforms for a batch of students |
 
 ## Leaderboard Endpoints
 

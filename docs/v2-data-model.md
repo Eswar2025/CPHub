@@ -1,6 +1,6 @@
 # CP Hub v2 Data Model
 
-This document describes the conceptual SQL schema for CP Hub v2. It is not a Prisma implementation yet.
+This document describes the SQL schema for CP Hub v2. The Prisma foundation now implements these core tables; v1 JSON-backed routes still remain active until the later migration phase.
 
 ## Student
 

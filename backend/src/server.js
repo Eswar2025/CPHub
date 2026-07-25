@@ -2,6 +2,7 @@ const express = require("express");
 const profileRoutes = require("./routes/profile.routes");
 const leaderboardRoutes = require("./routes/leaderboard.routes");
 const metricsRoutes = require("./routes/metrics.routes");
+const v2StudentsRoutes = require("./routes/v2StudentsRoutes");
 const rateLimiter = require("./middleware/rateLimiter");
 const cacheService = require("./services/cache.service");
 const metricsService = require("./services/metrics.service");
@@ -18,7 +19,7 @@ app.use(express.json());
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") {
@@ -67,6 +68,7 @@ app.get("/api/health", async (req, res) => {
 app.use("/api/profile", profileRoutes);
 app.use("/api/leaderboard", leaderboardRoutes);
 app.use("/api/metrics", metricsRoutes);
+app.use("/api/v2/students", v2StudentsRoutes);
 
 app.use((req, res) => {
   sendError(res, 404, "ROUTE_NOT_FOUND", "Route not found");
